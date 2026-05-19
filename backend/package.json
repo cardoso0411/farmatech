@@ -1,0 +1,27 @@
+{
+  "name": "farmatech-backend",
+  "version": "1.0.0",
+  "description": "Backend para sistema de farmácia",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "mysql2": "^3.22.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "farmacia",
+    "sistema",
+    "web"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT"
+}

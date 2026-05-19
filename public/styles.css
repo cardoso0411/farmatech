@@ -1,0 +1,21 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+header {
+  margin-bottom: 1rem;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+#feedbackMessage {
+  margin-bottom: 1rem;
+}
+
+#clientesContent,
+#remediosContent {
+  min-height: 80px;
+}
