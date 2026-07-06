@@ -47,7 +47,7 @@ export function PdvPage() {
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                   <TextField fullWidth label="Buscar cliente" placeholder="Nome, CPF ou telefone" />
                   <Button variant="contained" startIcon={<SearchIcon />}>
-                    Localizar
+                    Buscar
                   </Button>
                   <Button variant="outlined">Venda sem cliente</Button>
                 </Stack>

@@ -42,9 +42,9 @@ export function DashboardLayout({ children }: PropsWithChildren) {
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <LocalPharmacyIcon />
-            <Typography variant="h6">Farmatech</Typography>
+            <Typography variant="h6">Farmácia Brasil</Typography>
           </Box>
-          <Typography variant="body2">Sistema web da farmácia</Typography>
+          <Typography variant="body2">Sistema da farmácia</Typography>
         </Toolbar>
       </AppBar>
 
