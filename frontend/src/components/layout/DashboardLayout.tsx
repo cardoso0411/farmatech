@@ -1,6 +1,10 @@
 import LocalPharmacyIcon from '@mui/icons-material/LocalPharmacy';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded';
 import VaccinesIcon from '@mui/icons-material/Vaccines';
 import {
   AppBar,
@@ -19,9 +23,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const drawerWidth = 240;
 
 const items = [
-  { label: 'PDV', path: '/', icon: <PointOfSaleIcon /> },
+  { label: 'Início', path: '/', icon: <HomeRoundedIcon /> },
+  { label: 'PDV', path: '/pdv', icon: <PointOfSaleIcon /> },
   { label: 'Clientes', path: '/clientes', icon: <PeopleAltIcon /> },
   { label: 'Produtos', path: '/produtos', icon: <VaccinesIcon /> },
+  { label: 'Caixa', path: '/caixa', icon: <PaymentsRoundedIcon /> },
+  { label: 'Estoque', path: '/estoque', icon: <Inventory2Icon /> },
+  { label: 'Relatórios', path: '/relatorios', icon: <AssessmentIcon /> },
 ];
 
 export function DashboardLayout({ children }: PropsWithChildren) {
@@ -36,7 +44,7 @@ export function DashboardLayout({ children }: PropsWithChildren) {
             <LocalPharmacyIcon />
             <Typography variant="h6">Farmatech</Typography>
           </Box>
-          <Typography variant="body2">Operação de balcão simplificada</Typography>
+          <Typography variant="body2">Sistema web da farmácia</Typography>
         </Toolbar>
       </AppBar>
 
