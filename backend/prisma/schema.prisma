@@ -28,6 +28,22 @@ enum PaymentMethod {
   OTHER
 }
 
+enum CustomerPersonType {
+  INDIVIDUAL
+  COMPANY
+}
+
+enum CustomerClassification {
+  GOOD
+  MEDIUM
+  BAD
+}
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model User {
   id           String                @id @default(cuid())
   name         String
@@ -41,17 +57,62 @@ model User {
 }
 
 model Customer {
-  id          String    @id @default(cuid())
+  id                    String                 @id @default(cuid())
+  code                  Int                    @unique @default(autoincrement())
+  personType            CustomerPersonType     @default(INDIVIDUAL)
+  customerTypeId        String?
+  customerType          CustomerType?          @relation(fields: [customerTypeId], references: [id])
+  fullName              String
+  cpf                   String?                @unique
+  rg                    String?
+  cnpj                  String?                @unique
+  stateRegistration     String?
+  email                 String?
+  address               String?
+  addressNumber         String?
+  district              String?
+  zipCode               String?
+  city                  String?
+  state                 String?
+  phone                 String?
+  mobilePhone           String?
+  birthDate             DateTime?
+  spcDate               DateTime?
+  isBlocked             Boolean                @default(false)
+  hasSubscription       Boolean                @default(false)
+  classification        CustomerClassification @default(GOOD)
+  sellerId              String?
+  seller                Seller?                @relation(fields: [sellerId], references: [id])
+  status                CustomerStatus         @default(ACTIVE)
+  isSupplier            Boolean                @default(false)
+  insuranceOnly         Boolean                @default(false)
+  insurance             String?
+  notes                 String?                @db.Text
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  sales                 Sale[]
+}
+
+model CustomerType {
+  id          String     @id @default(cuid())
   name        String
-  cpfCnpj     String?   @unique
-  phone       String?
+  description String?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  customers   Customer[]
+}
+
+model Seller {
+  id          String     @id @default(cuid())
+  name        String
+  code        String?    @unique
   email       String?
-  birthDate   DateTime?
-  insurance   String?
-  notes       String?   @db.Text
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  sales       Sale[]
+  phone       String?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  customers   Customer[]
 }
 
 model Product {

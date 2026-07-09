@@ -1,8 +1,10 @@
 import { Router } from 'express';
+import { customerTypeRouter } from '../modules/customer-types/customer-type.routes';
 import { customerRouter } from '../modules/customers/customer.routes';
 import { healthRouter } from '../modules/health/health.routes';
 import { productRouter } from '../modules/products/product.routes';
 import { saleRouter } from '../modules/sales/sale.routes';
+import { sellerRouter } from '../modules/sellers/seller.routes';
 
 export const appRouter = Router();
 
@@ -14,6 +16,8 @@ appRouter.get('/', (_req, res) => {
 });
 
 appRouter.use('/health', healthRouter);
+appRouter.use('/customer-types', customerTypeRouter);
+appRouter.use('/sellers', sellerRouter);
 appRouter.use('/customers', customerRouter);
 appRouter.use('/products', productRouter);
 appRouter.use('/sales', saleRouter);

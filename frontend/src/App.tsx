@@ -1,12 +1,14 @@
 import { Route, Routes } from 'react-router-dom';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { CashRegisterPage } from './pages/CashRegisterPage';
+import { CustomerTypesPage } from './pages/CustomerTypesPage';
 import { CustomersPage } from './pages/CustomersPage';
 import { HomePage } from './pages/HomePage';
 import { InventoryPage } from './pages/InventoryPage';
 import { PdvPage } from './pages/PdvPage';
 import { ProductsPage } from './pages/ProductsPage';
 import { ReportsPage } from './pages/ReportsPage';
+import { SellersPage } from './pages/SellersPage';
 
 export function App() {
   return (
@@ -15,6 +17,8 @@ export function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/pdv" element={<PdvPage />} />
         <Route path="/clientes" element={<CustomersPage />} />
+        <Route path="/cadastros/tipos-clientes" element={<CustomerTypesPage />} />
+        <Route path="/cadastros/vendedores" element={<SellersPage />} />
         <Route path="/produtos" element={<ProductsPage />} />
         <Route path="/caixa" element={<CashRegisterPage />} />
         <Route path="/estoque" element={<InventoryPage />} />
