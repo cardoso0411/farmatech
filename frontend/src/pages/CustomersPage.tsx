@@ -15,6 +15,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { AxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -33,6 +34,7 @@ export function CustomersPage() {
   const [isSupplier, setIsSupplier] = useState(false);
   const [selectedCustomerTypeId, setSelectedCustomerTypeId] = useState('');
   const [selectedSellerId, setSelectedSellerId] = useState('');
+  const [saveErrorMessage, setSaveErrorMessage] = useState('');
   const [formData, setFormData] = useState({
     fullName: '',
     cpf: '',
@@ -86,6 +88,7 @@ export function CustomersPage() {
         notes: formData.notes || undefined,
       }),
     onSuccess: () => {
+      setSaveErrorMessage('');
       setFormData({
         fullName: '',
         cpf: '',
@@ -114,6 +117,17 @@ export function CustomersPage() {
       setSelectedCustomerTypeId('');
       setSelectedSellerId('');
     },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        setSaveErrorMessage(
+          error.response?.data?.message ||
+            'Não foi possível salvar o cliente. Verifique se o backend está rodando.'
+        );
+        return;
+      }
+
+      setSaveErrorMessage('Não foi possível salvar o cliente.');
+    },
   });
 
   function updateField<K extends keyof typeof formData>(field: K, value: (typeof formData)[K]) {
@@ -134,6 +148,9 @@ export function CustomersPage() {
         <Button variant="outlined" onClick={() => navigate('/cadastros/vendedores')}>
           Cadastro de Vendedores
         </Button>
+        <Button variant="outlined" onClick={() => navigate('/clientes/consultar')}>
+          Consultar
+        </Button>
       </Stack>
 
       <Grid container spacing={3}>
@@ -145,7 +162,7 @@ export function CustomersPage() {
                   <Alert severity="success">Cliente salvo com sucesso no banco de dados.</Alert>
                 )}
                 {createCustomerMutation.isError && (
-                  <Alert severity="error">Erro ao salvar cliente. Confira os dados obrigatórios e tente novamente.</Alert>
+                  <Alert severity="error">{saveErrorMessage}</Alert>
                 )}
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12, md: 3 }}>
@@ -306,7 +323,6 @@ export function CustomersPage() {
                   </Button>
                   <Button variant="outlined">Excluir</Button>
                   <Button variant="outlined" onClick={() => window.location.reload()}>Limpar</Button>
-                  <Button variant="outlined">Consultar</Button>
                 </Stack>
               </Stack>
             </CardContent>

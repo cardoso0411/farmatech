@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { CashRegisterPage } from './pages/CashRegisterPage';
 import { CustomerTypesPage } from './pages/CustomerTypesPage';
+import { CustomersListPage } from './pages/CustomersListPage';
 import { CustomersPage } from './pages/CustomersPage';
 import { HomePage } from './pages/HomePage';
 import { InventoryPage } from './pages/InventoryPage';
@@ -17,6 +18,7 @@ export function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/pdv" element={<PdvPage />} />
         <Route path="/clientes" element={<CustomersPage />} />
+        <Route path="/clientes/consultar" element={<CustomersListPage />} />
         <Route path="/cadastros/tipos-clientes" element={<CustomerTypesPage />} />
         <Route path="/cadastros/vendedores" element={<SellersPage />} />
         <Route path="/produtos" element={<ProductsPage />} />
