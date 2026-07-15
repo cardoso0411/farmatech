@@ -24,6 +24,8 @@ export async function createCustomer(req: Request, res: Response) {
       personType: data.personType,
       customerTypeId: data.customerTypeId,
       fullName: data.fullName,
+      tradeName: data.tradeName,
+      legalName: data.legalName,
       cpf: data.cpf,
       rg: data.rg,
       cnpj: data.cnpj,

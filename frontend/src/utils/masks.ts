@@ -28,6 +28,15 @@ export function maskCnpj(value: string) {
     .replace(/(\d{4})(\d)/, '$1-$2');
 }
 
+export function maskStateRegistration(value: string) {
+  const digits = digitsOnly(value).slice(0, 12);
+
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return digits.replace(/^(\d{3})(\d+)/, '$1.$2');
+  if (digits.length <= 9) return digits.replace(/^(\d{3})(\d{3})(\d+)/, '$1.$2.$3');
+  return digits.replace(/^(\d{3})(\d{3})(\d{3})(\d+)/, '$1.$2.$3.$4');
+}
+
 export function maskCep(value: string) {
   const digits = digitsOnly(value).slice(0, 8);
   return digits.replace(/^(\d{5})(\d)/, '$1-$2');

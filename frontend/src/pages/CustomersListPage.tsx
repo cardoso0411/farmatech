@@ -20,7 +20,9 @@ import { PageHeader } from '../components/common/PageHeader';
 type CustomerRow = {
   id: string;
   code: number;
-  fullName: string;
+  fullName: string | null;
+  legalName: string | null;
+  tradeName: string | null;
   cpf: string | null;
   cnpj: string | null;
   city: string | null;
@@ -99,7 +101,7 @@ export function CustomersListPage() {
                   (customersQuery.data ?? []).map((customer) => (
                     <TableRow key={customer.id}>
                       <TableCell>{customer.code}</TableCell>
-                      <TableCell>{customer.fullName}</TableCell>
+                      <TableCell>{customer.legalName || customer.fullName || customer.tradeName || '-'}</TableCell>
                       <TableCell>{customer.cpf || customer.cnpj || '-'}</TableCell>
                       <TableCell>{customer.customerType?.name ?? '-'}</TableCell>
                       <TableCell>

@@ -22,7 +22,15 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { PageHeader } from '../components/common/PageHeader';
 import { useCustomerSupport } from '../hooks/useCustomerSupport';
-import { maskCep, maskCnpj, maskCpf, maskMobilePhone, maskPhone, maskRg } from '../utils/masks';
+import {
+  maskCep,
+  maskCnpj,
+  maskCpf,
+  maskMobilePhone,
+  maskPhone,
+  maskRg,
+  maskStateRegistration,
+} from '../utils/masks';
 
 type PersonType = 'INDIVIDUAL' | 'COMPANY';
 type ClassificationType = 'GOOD' | 'MEDIUM' | 'BAD';
@@ -39,9 +47,12 @@ export function CustomersPage() {
   const [validationMessage, setValidationMessage] = useState('');
   const [formData, setFormData] = useState({
     fullName: '',
+    tradeName: '',
+    legalName: '',
     cpf: '',
     rg: '',
     cnpj: '',
+    stateRegistration: '',
     address: '',
     district: '',
     zipCode: '',
@@ -65,10 +76,13 @@ export function CustomersPage() {
       api.post('/customers', {
         personType,
         customerTypeId: selectedCustomerTypeId || undefined,
-        fullName: formData.fullName.trim(),
+        fullName: personType === 'INDIVIDUAL' ? formData.fullName.trim() : undefined,
+        tradeName: personType === 'COMPANY' ? formData.tradeName.trim() || undefined : undefined,
+        legalName: personType === 'COMPANY' ? formData.legalName.trim() || undefined : undefined,
         cpf: personType === 'INDIVIDUAL' ? formData.cpf.replace(/\D/g, '') || undefined : undefined,
         rg: personType === 'INDIVIDUAL' ? formData.rg.replace(/\D/g, '') || undefined : undefined,
         cnpj: personType === 'COMPANY' ? formData.cnpj.replace(/\D/g, '') || undefined : undefined,
+        stateRegistration: personType === 'COMPANY' ? formData.stateRegistration.trim() || undefined : undefined,
         address: formData.address.trim() || undefined,
         district: formData.district.trim() || undefined,
         zipCode: formData.zipCode.replace(/\D/g, '') || undefined,
@@ -94,9 +108,12 @@ export function CustomersPage() {
       setValidationMessage('');
       setFormData({
         fullName: '',
+        tradeName: '',
+        legalName: '',
         cpf: '',
         rg: '',
         cnpj: '',
+        stateRegistration: '',
         address: '',
         district: '',
         zipCode: '',
@@ -146,12 +163,12 @@ export function CustomersPage() {
   }
 
   function validateBeforeSave() {
-    if (!formData.fullName.trim()) {
-      setValidationMessage('Preencha o campo obrigatório: Nome completo.');
-      return false;
-    }
-
     if (personType === 'INDIVIDUAL') {
+      if (!formData.fullName.trim()) {
+        setValidationMessage('Preencha o campo obrigatório: Nome completo.');
+        return false;
+      }
+
       if (!formData.cpf.trim() && !formData.rg.trim()) {
         setValidationMessage('Preencha os campos obrigatórios: CPF e RG.');
         return false;
@@ -168,9 +185,26 @@ export function CustomersPage() {
       }
     }
 
-    if (personType === 'COMPANY' && !formData.cnpj.trim()) {
-      setValidationMessage('Preencha o campo obrigatório: CNPJ.');
-      return false;
+    if (personType === 'COMPANY') {
+      if (!formData.cnpj.trim()) {
+        setValidationMessage('Preencha o campo obrigatório: CNPJ.');
+        return false;
+      }
+
+      if (!formData.stateRegistration.trim()) {
+        setValidationMessage('Preencha o campo obrigatório: Inscrição Estadual.');
+        return false;
+      }
+
+      if (!formData.tradeName.trim()) {
+        setValidationMessage('Preencha o campo obrigatório: Nome fantasia.');
+        return false;
+      }
+
+      if (!formData.legalName.trim()) {
+        setValidationMessage('Preencha o campo obrigatório: Razão social.');
+        return false;
+      }
     }
 
     setValidationMessage('');
@@ -191,7 +225,7 @@ export function CustomersPage() {
     <Box>
       <PageHeader
         title="Cadastro de clientes"
-        description="Formulário principal do cliente com validação dos campos obrigatórios antes de gravar."
+        description="Pessoa física e pessoa jurídica com campos obrigatórios diferentes."
       />
 
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 3 }}>
@@ -215,9 +249,7 @@ export function CustomersPage() {
                   <Alert severity="success">Cliente salvo com sucesso no banco de dados.</Alert>
                 )}
                 {validationMessage && <Alert severity="warning">{validationMessage}</Alert>}
-                {createCustomerMutation.isError && (
-                  <Alert severity="error">{saveErrorMessage}</Alert>
-                )}
+                {createCustomerMutation.isError && <Alert severity="error">{saveErrorMessage}</Alert>}
 
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12, md: 3 }}>
@@ -252,52 +284,88 @@ export function CustomersPage() {
                   </RadioGroup>
                 </Box>
 
-                <Grid container spacing={2}>
-                  <Grid size={{ xs: 12 }}>
-                    <TextField
-                      required
-                      label="Nome completo / Razão social"
-                      fullWidth
-                      value={formData.fullName}
-                      onChange={(event) => updateField('fullName', event.target.value)}
-                    />
-                  </Grid>
-                </Grid>
-
-                <Grid container spacing={2}>
-                  {personType === 'INDIVIDUAL' ? (
-                    <>
-                      <Grid size={{ xs: 12, md: 4 }}>
-                      <TextField
-                        required
-                        label="CPF"
-                        fullWidth
-                        value={formData.cpf}
-                        onChange={(event) => updateField('cpf', maskCpf(event.target.value))}
-                      />
+                {personType === 'INDIVIDUAL' ? (
+                  <>
+                    <Grid container spacing={2}>
+                      <Grid size={{ xs: 12 }}>
+                        <TextField
+                          required
+                          label="Nome completo"
+                          fullWidth
+                          value={formData.fullName}
+                          onChange={(event) => updateField('fullName', event.target.value)}
+                        />
+                      </Grid>
                     </Grid>
-                    <Grid size={{ xs: 12, md: 4 }}>
-                      <TextField
-                        required
-                        label="RG"
-                        fullWidth
-                        value={formData.rg}
-                        onChange={(event) => updateField('rg', maskRg(event.target.value))}
-                      />
+
+                    <Grid container spacing={2}>
+                      <Grid size={{ xs: 12, md: 4 }}>
+                        <TextField
+                          required
+                          label="CPF"
+                          fullWidth
+                          value={formData.cpf}
+                          onChange={(event) => updateField('cpf', maskCpf(event.target.value))}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, md: 4 }}>
+                        <TextField
+                          required
+                          label="RG"
+                          fullWidth
+                          value={formData.rg}
+                          onChange={(event) => updateField('rg', maskRg(event.target.value))}
+                        />
+                      </Grid>
                     </Grid>
                   </>
                 ) : (
-                  <Grid size={{ xs: 12, md: 4 }}>
-                      <TextField
-                        required
-                        label="CNPJ"
-                        fullWidth
-                        value={formData.cnpj}
-                        onChange={(event) => updateField('cnpj', maskCnpj(event.target.value))}
-                      />
+                  <>
+                    <Grid container spacing={2}>
+                      <Grid size={{ xs: 12, md: 4 }}>
+                        <TextField
+                          required
+                          label="CNPJ"
+                          fullWidth
+                          value={formData.cnpj}
+                          onChange={(event) => updateField('cnpj', maskCnpj(event.target.value))}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, md: 4 }}>
+                        <TextField
+                          required
+                          label="Inscrição Estadual"
+                          fullWidth
+                          value={formData.stateRegistration}
+                          onChange={(event) =>
+                            updateField('stateRegistration', maskStateRegistration(event.target.value))
+                          }
+                        />
+                      </Grid>
                     </Grid>
-                  )}
-                </Grid>
+
+                    <Grid container spacing={2}>
+                      <Grid size={{ xs: 12, md: 6 }}>
+                        <TextField
+                          required
+                          label="Nome fantasia"
+                          fullWidth
+                          value={formData.tradeName}
+                          onChange={(event) => updateField('tradeName', event.target.value)}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, md: 6 }}>
+                        <TextField
+                          required
+                          label="Razão social"
+                          fullWidth
+                          value={formData.legalName}
+                          onChange={(event) => updateField('legalName', event.target.value)}
+                        />
+                      </Grid>
+                    </Grid>
+                  </>
+                )}
 
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12, md: 8 }}>
@@ -507,11 +575,7 @@ export function CustomersPage() {
                 />
 
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                  <Button
-                    variant="contained"
-                    onClick={handleSaveCustomer}
-                    disabled={createCustomerMutation.isPending}
-                  >
+                  <Button variant="contained" onClick={handleSaveCustomer} disabled={createCustomerMutation.isPending}>
                     Gravar
                   </Button>
                   <Button variant="outlined">Excluir</Button>
@@ -545,8 +609,12 @@ export function CustomersPage() {
                   Campos obrigatórios
                 </Typography>
                 <Stack spacing={1.5}>
-                  <Typography color="text.secondary">Pessoa física exige `Nome completo`, `CPF` e `RG`.</Typography>
-                  <Typography color="text.secondary">Pessoa jurídica exige `Nome completo` e `CNPJ`.</Typography>
+                  <Typography color="text.secondary">
+                    Pessoa física exige `Nome completo`, `CPF` e `RG`.
+                  </Typography>
+                  <Typography color="text.secondary">
+                    Pessoa jurídica exige `CNPJ`, `Inscrição Estadual`, `Nome fantasia` e `Razão social`.
+                  </Typography>
                 </Stack>
               </CardContent>
             </Card>

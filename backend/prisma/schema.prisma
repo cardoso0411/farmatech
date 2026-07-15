@@ -62,7 +62,9 @@ model Customer {
   personType            CustomerPersonType     @default(INDIVIDUAL)
   customerTypeId        String?
   customerType          CustomerType?          @relation(fields: [customerTypeId], references: [id])
-  fullName              String
+  fullName              String?
+  tradeName             String?
+  legalName             String?
   cpf                   String?                @unique
   rg                    String?
   cnpj                  String?                @unique
