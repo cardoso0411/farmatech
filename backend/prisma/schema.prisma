@@ -119,20 +119,65 @@ model Seller {
 
 model Product {
   id             String      @id @default(cuid())
-  name           String
-  sku            String?     @unique
+  summary        String
+  description    String
   barcode        String?     @unique
-  category       String?
+  categoryId     String?
+  groupId        String?
+  brand          String?
+  sngpc          String?
+  rms            String?
+  presentation   String?
+  reference      String?
+  activeIngredient String?
   unit           String      @default("UN")
+  dcb            String?
+  packageQuantity Int?
+  fractionQuantity Int?
   salePrice      Decimal     @db.Decimal(10, 2)
   costPrice      Decimal?    @db.Decimal(10, 2)
   stockQuantity  Int         @default(0)
   minimumStock   Int         @default(0)
+  isGeneric      Boolean     @default(false)
+  isControlled   Boolean     @default(false)
+  isSpecial      Boolean     @default(false)
+  isFractioned   Boolean     @default(false)
+  isSimilar      Boolean     @default(false)
+  ncmCode        String?
+  pisList        String?
+  origin         String?
+  icms           String?
+  saleOperation  String?
+  observation    String?     @db.Text
   isActive       Boolean     @default(true)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
+  category       ProductCategory? @relation(fields: [categoryId], references: [id])
+  group          ProductGroup? @relation(fields: [groupId], references: [id])
   saleItems      SaleItem[]
   stockMovements StockMovement[]
+}
+
+model ProductCategory {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  name        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model ProductGroup {
+  id            String    @id @default(cuid())
+  local         String
+  groupName     String
+  sngpc         String
+  saleOperation String
+  code          String    @unique
+  caution       String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  products      Product[]
 }
 
 model Sale {

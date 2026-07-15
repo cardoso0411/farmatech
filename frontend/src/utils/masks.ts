@@ -37,6 +37,10 @@ export function maskStateRegistration(value: string) {
   return digits.replace(/^(\d{3})(\d{3})(\d{3})(\d+)/, '$1.$2.$3.$4');
 }
 
+export function maskProductBarcode(value: string) {
+  return digitsOnly(value).slice(0, 14);
+}
+
 export function maskCep(value: string) {
   const digits = digitsOnly(value).slice(0, 8);
   return digits.replace(/^(\d{5})(\d)/, '$1-$2');

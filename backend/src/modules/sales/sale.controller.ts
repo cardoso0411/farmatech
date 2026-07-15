@@ -67,7 +67,7 @@ export async function createSale(req: Request, res: Response) {
       }
 
       if (product.stockQuantity < item.quantity) {
-        throw new HttpError(400, `Estoque insuficiente para ${product.name}.`);
+        throw new HttpError(400, `Estoque insuficiente para ${product.summary}.`);
       }
     }
 
