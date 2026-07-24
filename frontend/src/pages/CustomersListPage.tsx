@@ -1,6 +1,7 @@
 import {
   Alert,
   Box,
+  Button,
   Card,
   CardContent,
   Chip,
@@ -9,11 +10,15 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   Typography,
 } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { PageHeader } from '../components/common/PageHeader';
 
@@ -46,6 +51,9 @@ const statusLabel: Record<CustomerRow['status'], string> = {
 };
 
 export function CustomersListPage() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [actionError, setActionError] = useState('');
   const customersQuery = useQuery({
     queryKey: ['customers'],
     queryFn: async () => {
@@ -53,6 +61,31 @@ export function CustomersListPage() {
       return response.data.customers;
     },
   });
+  const deleteCustomerMutation = useMutation({
+    mutationFn: async (customerId: string) => api.delete(`/customers/${customerId}`),
+    onSuccess: () => {
+      setActionError('');
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        setActionError(error.response?.data?.message || 'Não foi possível excluir o cliente.');
+        return;
+      }
+
+      setActionError('Não foi possível excluir o cliente.');
+    },
+  });
+
+  function handleDeleteCustomer(customer: CustomerRow) {
+    const customerName = customer.legalName || customer.fullName || customer.tradeName || 'este cliente';
+
+    if (!window.confirm(`Deseja realmente excluir ${customerName}?`)) {
+      return;
+    }
+
+    deleteCustomerMutation.mutate(customer.id);
+  }
 
   return (
     <Box>
@@ -63,6 +96,8 @@ export function CustomersListPage() {
 
       <Card>
         <CardContent>
+          {actionError && <Alert severity="error" sx={{ mb: 2 }}>{actionError}</Alert>}
+
           {customersQuery.isLoading && (
             <Stack direction="row" spacing={1.5} alignItems="center">
               <CircularProgress size={22} />
@@ -77,56 +112,79 @@ export function CustomersListPage() {
           )}
 
           {!customersQuery.isLoading && !customersQuery.isError && (
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Código</TableCell>
-                  <TableCell>Nome completo</TableCell>
-                  <TableCell>Documento</TableCell>
-                  <TableCell>Tipo cliente</TableCell>
-                  <TableCell>Cidade</TableCell>
-                  <TableCell>Telefone</TableCell>
-                  <TableCell>Classificação</TableCell>
-                  <TableCell>Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(customersQuery.data ?? []).length === 0 ? (
+            <TableContainer>
+              <Table>
+                <TableHead>
                   <TableRow>
-                    <TableCell colSpan={8} align="center">
-                      Nenhum cliente cadastrado ainda.
-                    </TableCell>
+                    <TableCell>Código</TableCell>
+                    <TableCell>Nome completo</TableCell>
+                    <TableCell>Documento</TableCell>
+                    <TableCell>Tipo cliente</TableCell>
+                    <TableCell>Cidade</TableCell>
+                    <TableCell>Telefone</TableCell>
+                    <TableCell>Classificação</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Ações</TableCell>
                   </TableRow>
-                ) : (
-                  (customersQuery.data ?? []).map((customer) => (
-                    <TableRow key={customer.id}>
-                      <TableCell>{customer.code}</TableCell>
-                      <TableCell>{customer.legalName || customer.fullName || customer.tradeName || '-'}</TableCell>
-                      <TableCell>{customer.cpf || customer.cnpj || '-'}</TableCell>
-                      <TableCell>{customer.customerType?.name ?? '-'}</TableCell>
-                      <TableCell>
-                        {[customer.city, customer.state].filter(Boolean).join(' / ') || '-'}
+                </TableHead>
+                <TableBody>
+                  {(customersQuery.data ?? []).length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={9} align="center">
+                        Nenhum cliente cadastrado ainda.
                       </TableCell>
-                      <TableCell>{customer.mobilePhone || customer.phone || '-'}</TableCell>
-                      <TableCell>
-                        <Chip
-                          size="small"
-                          label={classificationLabel[customer.classification]}
-                          color={
-                            customer.classification === 'GOOD'
-                              ? 'success'
-                              : customer.classification === 'MEDIUM'
-                                ? 'warning'
-                                : 'error'
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>{statusLabel[customer.status]}</TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+                  ) : (
+                    (customersQuery.data ?? []).map((customer) => (
+                      <TableRow key={customer.id}>
+                        <TableCell>{customer.code}</TableCell>
+                        <TableCell>{customer.legalName || customer.fullName || customer.tradeName || '-'}</TableCell>
+                        <TableCell>{customer.cpf || customer.cnpj || '-'}</TableCell>
+                        <TableCell>{customer.customerType?.name ?? '-'}</TableCell>
+                        <TableCell>
+                          {[customer.city, customer.state].filter(Boolean).join(' / ') || '-'}
+                        </TableCell>
+                        <TableCell>{customer.mobilePhone || customer.phone || '-'}</TableCell>
+                        <TableCell>
+                          <Chip
+                            size="small"
+                            label={classificationLabel[customer.classification]}
+                            color={
+                              customer.classification === 'GOOD'
+                                ? 'success'
+                                : customer.classification === 'MEDIUM'
+                                  ? 'warning'
+                                  : 'error'
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>{statusLabel[customer.status]}</TableCell>
+                        <TableCell>
+                          <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={() => navigate(`/clientes?editar=${customer.id}`)}
+                            >
+                              Editar
+                            </Button>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              color="error"
+                              onClick={() => handleDeleteCustomer(customer)}
+                              disabled={deleteCustomerMutation.isPending}
+                            >
+                              Excluir
+                            </Button>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
           )}
         </CardContent>
       </Card>

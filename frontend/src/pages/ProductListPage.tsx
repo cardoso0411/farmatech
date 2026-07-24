@@ -1,6 +1,7 @@
 import {
   Alert,
   Box,
+  Button,
   Card,
   CardContent,
   Chip,
@@ -14,7 +15,10 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { PageHeader } from '../components/common/PageHeader';
 
@@ -63,6 +67,9 @@ function buildFlags(product: ProductRow) {
 }
 
 export function ProductListPage() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [actionError, setActionError] = useState('');
   const productsQuery = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
@@ -70,6 +77,29 @@ export function ProductListPage() {
       return response.data.products;
     },
   });
+  const deleteProductMutation = useMutation({
+    mutationFn: async (productId: string) => api.delete(`/products/${productId}`),
+    onSuccess: () => {
+      setActionError('');
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        setActionError(error.response?.data?.message || 'Não foi possível excluir o produto.');
+        return;
+      }
+
+      setActionError('Não foi possível excluir o produto.');
+    },
+  });
+
+  function handleDeleteProduct(product: ProductRow) {
+    if (!window.confirm(`Deseja realmente excluir ${product.summary}?`)) {
+      return;
+    }
+
+    deleteProductMutation.mutate(product.id);
+  }
 
   return (
     <Box>
@@ -80,6 +110,8 @@ export function ProductListPage() {
 
       <Card>
         <CardContent>
+          {actionError && <Alert severity="error" sx={{ mb: 2 }}>{actionError}</Alert>}
+
           {productsQuery.isLoading && (
             <Stack direction="row" spacing={1.5} alignItems="center">
               <CircularProgress size={22} />
@@ -111,12 +143,13 @@ export function ProductListPage() {
                     <TableCell>Minimo</TableCell>
                     <TableCell>Flags</TableCell>
                     <TableCell>Status</TableCell>
+                    <TableCell>Acoes</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {(productsQuery.data ?? []).length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={13} align="center">
+                      <TableCell colSpan={14} align="center">
                         Nenhum produto cadastrado ainda.
                       </TableCell>
                     </TableRow>
@@ -160,6 +193,26 @@ export function ProductListPage() {
                               color={product.isActive ? 'success' : 'default'}
                               label={product.isActive ? 'Ativo' : 'Inativo'}
                             />
+                          </TableCell>
+                          <TableCell>
+                            <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={() => navigate(`/produtos?editar=${product.id}`)}
+                              >
+                                Editar
+                              </Button>
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                color="error"
+                                onClick={() => handleDeleteProduct(product)}
+                                disabled={deleteProductMutation.isPending}
+                              >
+                                Excluir
+                              </Button>
+                            </Stack>
                           </TableCell>
                         </TableRow>
                       );

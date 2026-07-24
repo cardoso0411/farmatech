@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   Checkbox,
+  CircularProgress,
   FormControlLabel,
   FormLabel,
   Grid2 as Grid,
@@ -16,9 +17,9 @@ import {
   Typography,
 } from '@mui/material';
 import { AxiosError } from 'axios';
-import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../lib/api';
 import { PageHeader } from '../components/common/PageHeader';
 import { useCustomerSupport } from '../hooks/useCustomerSupport';
@@ -35,8 +36,44 @@ import {
 type PersonType = 'INDIVIDUAL' | 'COMPANY';
 type ClassificationType = 'GOOD' | 'MEDIUM' | 'BAD';
 
+type CustomerDetail = {
+  id: string;
+  personType: PersonType;
+  customerTypeId: string | null;
+  sellerId: string | null;
+  fullName: string | null;
+  tradeName: string | null;
+  legalName: string | null;
+  cpf: string | null;
+  rg: string | null;
+  cnpj: string | null;
+  stateRegistration: string | null;
+  address: string | null;
+  district: string | null;
+  zipCode: string | null;
+  city: string | null;
+  state: string | null;
+  phone: string | null;
+  mobilePhone: string | null;
+  email: string | null;
+  birthDate: string | null;
+  spcDate: string | null;
+  insurance: string | null;
+  notes: string | null;
+  isBlocked: boolean;
+  hasSubscription: boolean;
+  insuranceOnly: boolean;
+  isSupplier: boolean;
+  classification: ClassificationType;
+  status: 'ACTIVE' | 'INACTIVE';
+};
+
 export function CustomersPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('editar');
+  const isEditing = Boolean(editId);
   const { customerTypesQuery, sellersQuery } = useCustomerSupport();
   const [personType, setPersonType] = useState<PersonType>('INDIVIDUAL');
   const [classification, setClassification] = useState<ClassificationType>('GOOD');
@@ -71,9 +108,88 @@ export function CustomersPage() {
     status: 'ACTIVE',
   });
 
+  const customerQuery = useQuery({
+    queryKey: ['customer', editId],
+    enabled: isEditing,
+    queryFn: async () => {
+      const response = await api.get<{ customer: CustomerDetail }>(`/customers/${editId}`);
+      return response.data.customer;
+    },
+  });
+
+  useEffect(() => {
+    if (!customerQuery.data) {
+      return;
+    }
+
+    const customer = customerQuery.data;
+
+    setPersonType(customer.personType);
+    setClassification(customer.classification);
+    setIsSupplier(customer.isSupplier);
+    setSelectedCustomerTypeId(customer.customerTypeId ?? '');
+    setSelectedSellerId(customer.sellerId ?? '');
+    setFormData({
+      fullName: customer.fullName ?? '',
+      tradeName: customer.tradeName ?? '',
+      legalName: customer.legalName ?? '',
+      cpf: customer.cpf ?? '',
+      rg: customer.rg ?? '',
+      cnpj: customer.cnpj ?? '',
+      stateRegistration: customer.stateRegistration ?? '',
+      address: customer.address ?? '',
+      district: customer.district ?? '',
+      zipCode: customer.zipCode ?? '',
+      city: customer.city ?? '',
+      state: customer.state ?? '',
+      phone: customer.phone ?? '',
+      mobilePhone: customer.mobilePhone ?? '',
+      email: customer.email ?? '',
+      birthDate: customer.birthDate ? customer.birthDate.slice(0, 10) : '',
+      spcDate: customer.spcDate ? customer.spcDate.slice(0, 10) : '',
+      insurance: customer.insurance ?? '',
+      notes: customer.notes ?? '',
+      isBlocked: customer.isBlocked,
+      hasSubscription: customer.hasSubscription,
+      insuranceOnly: customer.insuranceOnly,
+      status: customer.status,
+    });
+  }, [customerQuery.data]);
+
   const createCustomerMutation = useMutation({
     mutationFn: async () =>
-      api.post('/customers', {
+      isEditing
+        ? api.put(`/customers/${editId}`, {
+            personType,
+            customerTypeId: selectedCustomerTypeId || undefined,
+            fullName: personType === 'INDIVIDUAL' ? formData.fullName.trim() : undefined,
+            tradeName: personType === 'COMPANY' ? formData.tradeName.trim() || undefined : undefined,
+            legalName: personType === 'COMPANY' ? formData.legalName.trim() || undefined : undefined,
+            cpf: personType === 'INDIVIDUAL' ? formData.cpf.replace(/\D/g, '') || undefined : undefined,
+            rg: personType === 'INDIVIDUAL' ? formData.rg.replace(/\D/g, '') || undefined : undefined,
+            cnpj: personType === 'COMPANY' ? formData.cnpj.replace(/\D/g, '') || undefined : undefined,
+            stateRegistration: personType === 'COMPANY' ? formData.stateRegistration.trim() || undefined : undefined,
+            address: formData.address.trim() || undefined,
+            district: formData.district.trim() || undefined,
+            zipCode: formData.zipCode.replace(/\D/g, '') || undefined,
+            city: formData.city.trim() || undefined,
+            state: formData.state.trim() || undefined,
+            phone: formData.phone.replace(/\D/g, '') || undefined,
+            mobilePhone: formData.mobilePhone.replace(/\D/g, '') || undefined,
+            email: formData.email.trim() || undefined,
+            birthDate: formData.birthDate ? new Date(formData.birthDate).toISOString() : undefined,
+            spcDate: formData.spcDate ? new Date(formData.spcDate).toISOString() : undefined,
+            isBlocked: formData.isBlocked,
+            hasSubscription: formData.hasSubscription,
+            classification,
+            sellerId: selectedSellerId || undefined,
+            status: formData.status,
+            isSupplier,
+            insuranceOnly: formData.insuranceOnly,
+            insurance: formData.insurance.trim() || undefined,
+            notes: formData.notes.trim() || undefined,
+          })
+        : api.post('/customers', {
         personType,
         customerTypeId: selectedCustomerTypeId || undefined,
         fullName: personType === 'INDIVIDUAL' ? formData.fullName.trim() : undefined,
@@ -104,8 +220,14 @@ export function CustomersPage() {
         notes: formData.notes.trim() || undefined,
       }),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
       setSaveErrorMessage('');
       setValidationMessage('');
+      if (isEditing) {
+        navigate('/clientes/consultar');
+        return;
+      }
+
       setFormData({
         fullName: '',
         tradeName: '',
@@ -224,8 +346,12 @@ export function CustomersPage() {
   return (
     <Box>
       <PageHeader
-        title="Cadastro de clientes"
-        description="Pessoa física e pessoa jurídica com campos obrigatórios diferentes."
+        title={isEditing ? 'Editar cliente' : 'Cadastro de clientes'}
+        description={
+          isEditing
+            ? 'Atualize os dados do cliente selecionado.'
+            : 'Pessoa física e pessoa jurídica com campos obrigatórios diferentes.'
+        }
       />
 
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 3 }}>
@@ -245,12 +371,23 @@ export function CustomersPage() {
           <Card>
             <CardContent>
               <Stack spacing={3}>
-                {createCustomerMutation.isSuccess && (
+                {!isEditing && createCustomerMutation.isSuccess && (
                   <Alert severity="success">Cliente salvo com sucesso no banco de dados.</Alert>
+                )}
+                {customerQuery.isLoading && (
+                  <Stack direction="row" spacing={1.5} alignItems="center">
+                    <CircularProgress size={22} />
+                    <Typography>Carregando dados do cliente...</Typography>
+                  </Stack>
+                )}
+                {customerQuery.isError && (
+                  <Alert severity="error">Não foi possível carregar os dados do cliente.</Alert>
                 )}
                 {validationMessage && <Alert severity="warning">{validationMessage}</Alert>}
                 {createCustomerMutation.isError && <Alert severity="error">{saveErrorMessage}</Alert>}
 
+                {!customerQuery.isLoading && !customerQuery.isError && (
+                  <>
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12, md: 3 }}>
                     <TextField label="Código" fullWidth placeholder="Automático" disabled />
@@ -576,13 +713,21 @@ export function CustomersPage() {
 
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                   <Button variant="contained" onClick={handleSaveCustomer} disabled={createCustomerMutation.isPending}>
-                    Gravar
+                    {isEditing ? 'Salvar alterações' : 'Gravar'}
                   </Button>
                   <Button variant="outlined">Excluir</Button>
-                  <Button variant="outlined" onClick={() => window.location.reload()}>
-                    Limpar
-                  </Button>
+                  {isEditing ? (
+                    <Button variant="outlined" onClick={() => navigate('/clientes/consultar')}>
+                      Cancelar edição
+                    </Button>
+                  ) : (
+                    <Button variant="outlined" onClick={() => window.location.reload()}>
+                      Limpar
+                    </Button>
+                  )}
                 </Stack>
+                  </>
+                )}
               </Stack>
             </CardContent>
           </Card>
