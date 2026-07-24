@@ -229,14 +229,14 @@ export function CustomersPage() {
       />
 
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 3 }}>
+        <Button variant="contained" onClick={() => navigate('/clientes/consultar')}>
+          Consultar
+        </Button>
         <Button variant="outlined" onClick={() => navigate('/cadastros/tipos-clientes')}>
           Cadastro de Tipos de Clientes
         </Button>
         <Button variant="outlined" onClick={() => navigate('/cadastros/vendedores')}>
           Cadastro de Vendedores
-        </Button>
-        <Button variant="outlined" onClick={() => navigate('/clientes/consultar')}>
-          Consultar
         </Button>
       </Stack>
 
