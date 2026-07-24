@@ -99,7 +99,7 @@ export function ProductListPage() {
                 <TableHead>
                   <TableRow>
                     <TableCell>Codigo de barras</TableCell>
-                    <TableCell>Resumo</TableCell>
+                    <TableCell>Nome do medicamento</TableCell>
                     <TableCell>Descricao</TableCell>
                     <TableCell>Categoria</TableCell>
                     <TableCell>Grupo</TableCell>

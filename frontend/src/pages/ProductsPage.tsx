@@ -156,7 +156,7 @@ export function ProductsPage() {
 
   function validateBeforeSave() {
     if (!formData.summary.trim()) {
-      setValidationMessage('Preencha o campo obrigatório: Resumo.');
+      setValidationMessage('Preencha o campo obrigatório: Nome do medicamento.');
       return false;
     }
 
@@ -265,7 +265,7 @@ export function ProductsPage() {
                     <TextField label="Marca / laboratório" fullWidth value={formData.brand} onChange={(event) => updateField('brand', event.target.value)} />
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
-                    <TextField required label="Resumo" fullWidth value={formData.summary} onChange={(event) => updateField('summary', event.target.value)} />
+                    <TextField required label="Nome do medicamento" fullWidth value={formData.summary} onChange={(event) => updateField('summary', event.target.value)} />
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <TextField
