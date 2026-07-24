@@ -197,6 +197,9 @@ export function ProductsPage() {
       />
 
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 3 }}>
+        <Button variant="contained" onClick={() => navigate('/produtos/consultar')}>
+          Consultar
+        </Button>
         <Button variant="outlined" onClick={() => navigate('/produtos/categorias')}>
           Cadastro de Categoria
         </Button>

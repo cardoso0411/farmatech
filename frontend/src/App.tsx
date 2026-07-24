@@ -10,6 +10,7 @@ import { PdvPage } from './pages/PdvPage';
 import { ProductsPage } from './pages/ProductsPage';
 import { ProductCategoriesPage } from './pages/ProductCategoriesPage';
 import { ProductGroupsPage } from './pages/ProductGroupsPage';
+import { ProductListPage } from './pages/ProductListPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { SellersPage } from './pages/SellersPage';
 
@@ -24,6 +25,7 @@ export function App() {
         <Route path="/cadastros/tipos-clientes" element={<CustomerTypesPage />} />
         <Route path="/cadastros/vendedores" element={<SellersPage />} />
         <Route path="/produtos" element={<ProductsPage />} />
+        <Route path="/produtos/consultar" element={<ProductListPage />} />
         <Route path="/produtos/categorias" element={<ProductCategoriesPage />} />
         <Route path="/produtos/grupos" element={<ProductGroupsPage />} />
         <Route path="/caixa" element={<CashRegisterPage />} />
