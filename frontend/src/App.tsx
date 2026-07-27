@@ -11,6 +11,7 @@ import { ProductsPage } from './pages/ProductsPage';
 import { ProductCategoriesPage } from './pages/ProductCategoriesPage';
 import { ProductGroupsPage } from './pages/ProductGroupsPage';
 import { ProductListPage } from './pages/ProductListPage';
+import { PaymentMethodsPage } from './pages/PaymentMethodsPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { SellersPage } from './pages/SellersPage';
 
@@ -28,6 +29,7 @@ export function App() {
         <Route path="/produtos/consultar" element={<ProductListPage />} />
         <Route path="/produtos/categorias" element={<ProductCategoriesPage />} />
         <Route path="/produtos/grupos" element={<ProductGroupsPage />} />
+        <Route path="/produtos/formas-de-pagamento" element={<PaymentMethodsPage />} />
         <Route path="/caixa" element={<CashRegisterPage />} />
         <Route path="/estoque" element={<InventoryPage />} />
         <Route path="/relatorios" element={<ReportsPage />} />

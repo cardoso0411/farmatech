@@ -5,6 +5,7 @@ import { healthRouter } from '../modules/health/health.routes';
 import { productRouter } from '../modules/products/product.routes';
 import { productCategoryRouter } from '../modules/product-categories/product-category.routes';
 import { productGroupRouter } from '../modules/product-groups/product-group.routes';
+import { paymentMethodConfigRouter } from '../modules/payment-method-configs/payment-method-config.routes';
 import { saleRouter } from '../modules/sales/sale.routes';
 import { sellerRouter } from '../modules/sellers/seller.routes';
 
@@ -23,5 +24,6 @@ appRouter.use('/sellers', sellerRouter);
 appRouter.use('/customers', customerRouter);
 appRouter.use('/product-categories', productCategoryRouter);
 appRouter.use('/product-groups', productGroupRouter);
+appRouter.use('/payment-method-configs', paymentMethodConfigRouter);
 appRouter.use('/products', productRouter);
 appRouter.use('/sales', saleRouter);

@@ -337,6 +337,9 @@ export function ProductsPage() {
         <Button variant="outlined" onClick={() => navigate('/produtos/grupos')}>
           Cadastro de Grupos
         </Button>
+        <Button variant="outlined" onClick={() => navigate('/produtos/formas-de-pagamento')}>
+          Cadastro de Formas de Pagamento
+        </Button>
       </Stack>
 
       <Grid container spacing={3}>
