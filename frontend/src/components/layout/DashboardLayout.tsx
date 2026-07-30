@@ -17,7 +17,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useAuth } from '../../auth/AuthContext';
@@ -39,12 +39,18 @@ export function DashboardLayout({ children }: PropsWithChildren) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const [currentDateTime, setCurrentDateTime] = useState(() => new Date());
   const visibleItems = user?.role === 'ADMIN'
     ? items
     : items
         .filter((item) => !['Estoque', 'Relatórios'].includes(item.label))
         .filter((item) => item.label !== 'Usuarios')
         .map((item) => item.label === 'Produtos' ? { ...item, path: '/produtos/consultar' } : item);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setCurrentDateTime(new Date()), 1000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -54,7 +60,15 @@ export function DashboardLayout({ children }: PropsWithChildren) {
             <LocalPharmacyIcon />
             <Typography variant="h6">Farmácia Brasil</Typography>
           </Box>
-          <Button color="inherit" onClick={logout}>Sair ({user?.name})</Button>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Typography variant="string" sx={{ fontWeight: 'bold' }}>
+              Usuário: {user?.username}
+            </Typography>
+            <Typography variant="body2">
+            {currentDateTime.toLocaleDateString()} {currentDateTime.toLocaleTimeString()}
+            </Typography>
+            <Button color="inherit" onClick={logout}>Sair</Button>
+          </Box>
         </Toolbar>
       </AppBar>
 
