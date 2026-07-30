@@ -19,6 +19,8 @@ import {
 } from '@mui/material';
 import { PropsWithChildren } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
+import { useAuth } from '../../auth/AuthContext';
 
 const drawerWidth = 240;
 
@@ -30,11 +32,19 @@ const items = [
   { label: 'Caixa', path: '/caixa', icon: <PaymentsRoundedIcon /> },
   { label: 'Estoque', path: '/estoque', icon: <Inventory2Icon /> },
   { label: 'Relatórios', path: '/relatorios', icon: <AssessmentIcon /> },
+  { label: 'Usuarios', path: '/cadastros/vendedores', icon: <PeopleAltIcon /> },
 ];
 
 export function DashboardLayout({ children }: PropsWithChildren) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
+  const visibleItems = user?.role === 'ADMIN'
+    ? items
+    : items
+        .filter((item) => !['Estoque', 'Relatórios'].includes(item.label))
+        .filter((item) => item.label !== 'Usuarios')
+        .map((item) => item.label === 'Produtos' ? { ...item, path: '/produtos/consultar' } : item);
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -44,7 +54,7 @@ export function DashboardLayout({ children }: PropsWithChildren) {
             <LocalPharmacyIcon />
             <Typography variant="h6">Farmácia Brasil</Typography>
           </Box>
-          <Typography variant="body2">Sistema da farmácia</Typography>
+          <Button color="inherit" onClick={logout}>Sair ({user?.name})</Button>
         </Toolbar>
       </AppBar>
 
@@ -62,7 +72,7 @@ export function DashboardLayout({ children }: PropsWithChildren) {
         <Toolbar />
         <Box sx={{ overflow: 'auto', mt: 1 }}>
           <List>
-            {items.map((item) => (
+            {visibleItems.map((item) => (
               <ListItemButton
                 key={item.path}
                 selected={location.pathname === item.path}

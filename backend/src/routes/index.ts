@@ -8,6 +8,8 @@ import { productGroupRouter } from '../modules/product-groups/product-group.rout
 import { paymentMethodConfigRouter } from '../modules/payment-method-configs/payment-method-config.routes';
 import { saleRouter } from '../modules/sales/sale.routes';
 import { sellerRouter } from '../modules/sellers/seller.routes';
+import { authRouter } from '../modules/auth/auth.routes';
+import { requireAuth } from '../middlewares/auth';
 
 export const appRouter = Router();
 
@@ -19,6 +21,8 @@ appRouter.get('/', (_req, res) => {
 });
 
 appRouter.use('/health', healthRouter);
+appRouter.use('/auth', authRouter);
+appRouter.use(requireAuth);
 appRouter.use('/customer-types', customerTypeRouter);
 appRouter.use('/sellers', sellerRouter);
 appRouter.use('/customers', customerRouter);

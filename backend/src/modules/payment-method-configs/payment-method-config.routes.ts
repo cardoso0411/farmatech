@@ -4,9 +4,10 @@ import {
   deletePaymentMethodConfig,
   listPaymentMethodConfigs,
 } from './payment-method-config.controller';
+import { requireAdmin } from '../../middlewares/auth';
 
 export const paymentMethodConfigRouter = Router();
 
 paymentMethodConfigRouter.get('/', listPaymentMethodConfigs);
-paymentMethodConfigRouter.post('/', createPaymentMethodConfig);
-paymentMethodConfigRouter.delete('/:id', deletePaymentMethodConfig);
+paymentMethodConfigRouter.post('/', requireAdmin, createPaymentMethodConfig);
+paymentMethodConfigRouter.delete('/:id', requireAdmin, deletePaymentMethodConfig);

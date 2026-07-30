@@ -17,3 +17,7 @@ export const createSellerSchema = z.object({
   email: z.string().trim().email('E-mail inválido.').optional().or(z.literal('')),
   observation: z.string().trim().max(2000).optional(),
 });
+
+export const updateSellerSchema = createSellerSchema.extend({
+  password: z.string().min(6, 'Senha deve ter ao menos 6 caracteres.').max(100).optional(),
+});

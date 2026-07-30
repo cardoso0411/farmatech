@@ -1,4 +1,5 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { useAuth } from './auth/AuthContext';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { CashRegisterPage } from './pages/CashRegisterPage';
 import { CustomerTypesPage } from './pages/CustomerTypesPage';
@@ -14,8 +15,12 @@ import { ProductListPage } from './pages/ProductListPage';
 import { PaymentMethodsPage } from './pages/PaymentMethodsPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { SellersPage } from './pages/SellersPage';
+import { LoginPage } from './pages/LoginPage';
 
 export function App() {
+  const { user } = useAuth();
+  if (!user) return <LoginPage />;
+  const adminOnly = (element: JSX.Element) => user.role === 'ADMIN' ? element : <Navigate to="/" replace />;
   return (
     <DashboardLayout>
       <Routes>
@@ -23,16 +28,16 @@ export function App() {
         <Route path="/pdv" element={<PdvPage />} />
         <Route path="/clientes" element={<CustomersPage />} />
         <Route path="/clientes/consultar" element={<CustomersListPage />} />
-        <Route path="/cadastros/tipos-clientes" element={<CustomerTypesPage />} />
-        <Route path="/cadastros/vendedores" element={<SellersPage />} />
-        <Route path="/produtos" element={<ProductsPage />} />
+        <Route path="/cadastros/tipos-clientes" element={adminOnly(<CustomerTypesPage />)} />
+        <Route path="/cadastros/vendedores" element={adminOnly(<SellersPage />)} />
+        <Route path="/produtos" element={adminOnly(<ProductsPage />)} />
         <Route path="/produtos/consultar" element={<ProductListPage />} />
-        <Route path="/produtos/categorias" element={<ProductCategoriesPage />} />
-        <Route path="/produtos/grupos" element={<ProductGroupsPage />} />
-        <Route path="/produtos/formas-de-pagamento" element={<PaymentMethodsPage />} />
+        <Route path="/produtos/categorias" element={adminOnly(<ProductCategoriesPage />)} />
+        <Route path="/produtos/grupos" element={adminOnly(<ProductGroupsPage />)} />
+        <Route path="/produtos/formas-de-pagamento" element={adminOnly(<PaymentMethodsPage />)} />
         <Route path="/caixa" element={<CashRegisterPage />} />
-        <Route path="/estoque" element={<InventoryPage />} />
-        <Route path="/relatorios" element={<ReportsPage />} />
+        <Route path="/estoque" element={adminOnly(<InventoryPage />)} />
+        <Route path="/relatorios" element={adminOnly(<ReportsPage />)} />
       </Routes>
     </DashboardLayout>
   );
