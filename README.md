@@ -1,6 +1,6 @@
 # Farmatech
 
-Farmatech e um sistema web para gestão de farmacia, pensado para uso em balcão, cadastro de clientes, cadastro de produtos, controle de estoque, formas de pagamento, caixa e vendas em rede local.
+Farmatech e um sistema web para gestão de farmácia, pensado para uso em balcão, cadastro de clientes, cadastro de produtos, controle de estoque, formas de pagamento, caixa e vendas em rede local.
 
 O projeto esta organizado em duas partes principais:
 
@@ -9,37 +9,37 @@ O projeto esta organizado em duas partes principais:
 
 ## Objetivo do sistema
 
-O Farmatech foi criado para centralizar a rotina de uma farmacia em um unico sistema acessado pelo navegador. A ideia e permitir que um servidor local da farmacia rode o backend e o banco de dados, enquanto os computadores do balcao, caixa e administracao acessam os mesmos dados pela rede interna.
+O Farmatech foi criado para centralizar a rotina de uma farmácia em um único sistema acessado pelo navegador. A ideia e permitir que um servidor local da farmácia rode o backend e o banco de dados, enquanto os computadores do balcão, caixa e administração acessam os mesmos dados pela rede interna.
 
-Com isso, cadastros, vendas, estoque e relatorios ficam integrados, evitando informacoes espalhadas em planilhas ou controles manuais.
+Com isso, cadastros, vendas, estoque e relatórios ficam integrados, evitando informações espalhadas em planilhas ou controles manuais.
 
 ## Funcionalidades atuais
 
-### Autenticacao e usuarios
+### Autenticação e usuários
 
 - Tela de login no frontend.
-- Autenticacao por usuario e senha de vendedor.
+- Autenticação por usuario e senha de vendedor.
 - Token local assinado no backend com validade de 8 horas.
 - Controle de acesso por perfil:
   - `ADMIN`: acesso completo aos cadastros administrativos.
-  - `MANAGER`: perfil previsto no banco para futuras permissoes gerenciais.
-  - `ATTENDANT`: perfil de atendimento/balcao.
-- Rotas protegidas no backend apos o login.
+  - `MANAGER`: perfil previsto no banco para futuras permissões gerenciais.
+  - `ATTENDANT`: perfil de atendimento/balcão.
+- Rotas protegidas no backend após o login.
 
-### Dashboard e navegacao
+### Dashboard e navegação
 
 - Layout principal com menu lateral.
 - Pagina inicial do sistema.
-- Navegacao por modulos usando React Router.
-- Protecao de telas administrativas no frontend para usuarios `ADMIN`.
+- Navegação por módulos usando React Router.
+- Proteção de telas administrativas no frontend para usuários `ADMIN`.
 
 ### Clientes
 
-- Cadastro completo de cliente pessoa fisica ou juridica.
-- Campos para CPF, RG, CNPJ, inscricao estadual, telefones, endereco, email e observacoes.
-- Classificacao do cliente como bom, medio ou ruim.
+- Cadastro completo de cliente pessoa física ou jurídica.
+- Campos para CPF, RG, CNPJ, inscrição estadual, telefones, endereço, email e observações.
+- Classificação do cliente como bom, médio ou ruim.
 - Status ativo/inativo.
-- Marcacoes de bloqueio, assinatura, fornecedor e atendimento apenas por convenio.
+- Marcações de bloqueio, assinatura, fornecedor e atendimento apenas por convenio.
 - Vinculo com tipo de cliente e vendedor.
 - Listagem, consulta, edicao e exclusao de clientes pela API.
 
@@ -62,8 +62,8 @@ Com isso, cadastros, vendas, estoque e relatorios ficam integrados, evitando inf
 ### Produtos
 
 - Cadastro completo de produtos.
-- Campos para codigo de barras, resumo, descricao, marca, apresentacao, referencia e principio ativo.
-- Dados farmaceuticos e fiscais como SNGPC, RMS, DCB, NCM, PIS, origem, ICMS e operacao de venda.
+- Campos para código de barras, resumo, descrição, marca, apresentação, referencia e principio ativo.
+- Dados farmacêuticos e fiscais como SNGPC, RMS, DCB, NCM, PIS, origem, ICMS e operação de venda.
 - Controle de preco de venda, preco de custo, quantidade em estoque e estoque minimo.
 - Marcacoes para produto generico, controlado, especial, fracionado e similar.
 - Vinculo com categoria e grupo de produto.
@@ -72,13 +72,13 @@ Com isso, cadastros, vendas, estoque e relatorios ficam integrados, evitando inf
 ### Categorias e grupos de produtos
 
 - Cadastro de categorias de produtos com codigo unico.
-- Cadastro de grupos de produtos com local, grupo, SNGPC, operacao de venda, codigo e cautela.
+- Cadastro de grupos de produtos com local, grupo, SNGPC, operação de venda, código e cautela.
 - Uso de categorias e grupos no cadastro de produtos.
 
 ### Formas de pagamento
 
-- Cadastro de configuracoes de formas de pagamento.
-- Abreviacao unica e descricao.
+- Cadastro de configurações de formas de pagamento.
+- Abreviação única e descrição.
 - Base preparada para uso no PDV e nas vendas.
 
 ### PDV e vendas
@@ -94,16 +94,16 @@ Com isso, cadastros, vendas, estoque e relatorios ficam integrados, evitando inf
 
 ### Estoque
 
-- Modelo de movimentacao de estoque no banco.
+- Modelo de movimentação de estoque no banco.
 - Baixa de estoque integrada ao registro de venda.
 - Campos de estoque atual e estoque minimo no produto.
 - Tela de estoque preparada no frontend.
 
-### Caixa e relatorios
+### Caixa e relatórios
 
-- Modelo de sessao de caixa no banco, com abertura, fechamento, usuario e observacoes.
+- Modelo de sessão de caixa no banco, com abertura, fechamento, usuario e observações.
 - Tela de caixa no frontend.
-- Tela de relatorios no frontend.
+- Tela de relatórios no frontend.
 - Base pronta para evoluir os fechamentos, consultas e indicadores.
 
 ## Estrutura do projeto
@@ -150,11 +150,11 @@ O backend expoe uma API REST em `/api`, usando Express e Prisma.
 
 ### Rotas principais
 
-- `GET /api`: informacoes da API.
-- `GET /api/health`: verificacao de saude.
+- `GET /api`: informações da API.
+- `GET /api/health`: verificação de saúde.
 - `POST /api/auth/login`: login.
 - `/api/customer-types`: tipos de clientes.
-- `/api/sellers`: vendedores e usuarios.
+- `/api/sellers`: vendedores e usuários.
 - `/api/customers`: clientes.
 - `/api/product-categories`: categorias de produtos.
 - `/api/product-groups`: grupos de produtos.
@@ -162,11 +162,11 @@ O backend expoe uma API REST em `/api`, usando Express e Prisma.
 - `/api/products`: produtos.
 - `/api/sales`: vendas.
 
-As rotas de negocio ficam protegidas por autenticacao. Apenas `/api`, `/api/health` e `/api/auth/login` ficam publicas.
+As rotas de negocio ficam protegidas por autenticação. Apenas `/api`, `/api/health` e `/api/auth/login` ficam publicas.
 
-### Variaveis de ambiente
+### Variáveis de ambiente
 
-Crie um arquivo `backend/.env` com as configuracoes do banco e da aplicacao:
+Crie um arquivo `backend/.env` com as configurações do banco e da aplicação:
 
 ```env
 PORT=3333
@@ -175,7 +175,7 @@ CORS_ORIGIN="http://localhost:5173"
 AUTH_SECRET="troque-esta-chave-em-producao"
 ```
 
-Tambem e aceito montar a conexao por variaveis legadas:
+Também é aceito montar a conexão por variáveis legadas:
 
 ```env
 DB_HOST=localhost
@@ -209,12 +209,12 @@ Scripts disponiveis:
 
 ## Frontend
 
-O frontend e uma aplicacao React com Vite, Material UI, React Router, React Query, Axios, React Hook Form e Zod.
+O frontend e uma aplicação React com Vite, Material UI, React Router, React Query, Axios, React Hook Form e Zod.
 
 ### Principais arquivos
 
-- `frontend/src/App.tsx`: define as rotas e a protecao das paginas.
-- `frontend/src/auth/AuthContext.tsx`: guarda a sessao do usuario no navegador.
+- `frontend/src/App.tsx`: define as rotas e a proteção das paginas.
+- `frontend/src/auth/AuthContext.tsx`: guarda a sessão do usuario no navegador.
 - `frontend/src/lib/api.ts`: configura o Axios.
 - `frontend/src/components/layout/DashboardLayout.tsx`: layout principal.
 - `frontend/src/pages/`: telas do sistema.
@@ -245,7 +245,7 @@ npm install
 npm run dev
 ```
 
-Scripts disponiveis:
+Scripts disponíveis:
 
 - `npm run dev`: inicia o Vite em desenvolvimento.
 - `npm run build`: compila TypeScript e gera o build.
@@ -276,29 +276,29 @@ npm run dev
 
 5. Acesse o frontend em `http://localhost:5173`.
 
-Observacao: no codigo atual, o backend usa `PORT=3333` por padrao, enquanto o frontend esta configurado em `frontend/src/lib/api.ts` para chamar `http://localhost:3000/api`. Ajuste a porta do backend para `3000` ou altere o `baseURL` do frontend para `http://localhost:3333/api`.
+Observação: no código atual, o backend usa `PORT=3333` por padrão, enquanto o frontend esta configurado em `frontend/src/lib/api.ts` para chamar `http://localhost:3000/api`. Ajuste a porta do backend para `3000` ou altere o `baseURL` do frontend para `http://localhost:3333/api`.
 
 ## Banco de dados
 
 O banco atual possui modelos para:
 
-- usuarios internos;
+- usuários internos;
 - clientes;
 - tipos de clientes;
 - vendedores;
 - produtos;
 - categorias de produtos;
 - grupos de produtos;
-- configuracoes de formas de pagamento;
+- configurações de formas de pagamento;
 - vendas;
 - itens de venda;
 - pagamentos;
-- sessoes de caixa;
-- movimentacoes de estoque.
+- sessões de caixa;
+- movimentações de estoque.
 
-O Prisma é responsavel por manter o schema, gerar o client e aplicar migrations no MySQL.
+O Prisma é responsável por manter o schema, gerar o client e aplicar migrations no MySQL.
 
-## Regras importantes ja implementadas
+## Regras importantes já implementadas
 
 - Uma venda só é registrada se todos os produtos existirem.
 - Uma venda só é registrada se houver estoque suficiente.
@@ -306,21 +306,21 @@ O Prisma é responsavel por manter o schema, gerar o client e aplicar migrations
 - Ao concluir uma venda, o estoque dos produtos é reduzido automaticamente.
 - Cada baixa de venda gera uma movimentação de estoque.
 - Produtos e clientes vinculados a outros registros não podem ser excluídos diretamente.
-- Rotas administrativas no frontend são bloqueadas para usuarios que não são `ADMIN`.
+- Rotas administrativas no frontend são bloqueadas para usuários que não são `ADMIN`.
 
 ## Atualizações futuras
 
-As proximas evoluções sugeridas para o Farmatech são:
+As próximas evoluções sugeridas para o Farmatech são:
 
 - Alinhar configuração de porta da API entre backend e frontend.
-- Finalizar fluxo completo do PDV com busca rapida por codigo de barras, carrinho, desconto, troco e impressao.
+- Finalizar fluxo completo do PDV com busca rápida por código de barras, carrinho, desconto, troco e impressão.
 - Implementar abertura, fechamento e conferencia de caixa.
-- Criar relatorios de vendas por periodo, vendedor, produto, forma de pagamento e cliente.
-- Criar tela de movimentações de estoque com entrada manual, ajuste, perda, devolução e historico.
-- Adicionar alerta de estoque minimo.
+- Criar relatórios de vendas por período, vendedor, produto, forma de pagamento e cliente.
+- Criar tela de movimentações de estoque com entrada manual, ajuste, perda, devolução e histórico.
+- Adicionar alerta de estoque mínimo.
 - Adicionar recuperação ou troca de senha.
-- Configurar backup automatico do banco MySQL.
-- Preparar instalação em servidor local da farmacia.
+- Configurar backup automático do banco MySQL.
+- Preparar instalação em servidor local da farmácia.
 - Adicionar testes automatizados para regras de venda, estoque e autenticação.
 - Melhorar responsividade e experiencia de uso em telas menores.
 - Adicionar integrações futuras com leitor de codigo de barras, impressora não fiscal e emissão fiscal, caso necessario.
