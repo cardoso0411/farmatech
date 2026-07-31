@@ -15,7 +15,7 @@ Sistema web para farmácia com foco em operação de balcão, cadastro, estoque 
 - `backend/`: API, regras de negócio e acesso ao banco
 - `docs/`: documentação funcional e de produto
 
-## Como o sistema vai funcionar
+## Como o sistema funciona
 
 O sistema foi pensado para cenário com servidor físico na farmácia e mais de um computador acessando os mesmos dados.
 
