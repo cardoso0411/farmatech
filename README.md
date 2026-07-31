@@ -1,6 +1,6 @@
 # Farmatech
 
-Farmatech e um sistema web para gestao de farmacia, pensado para uso em balcacao, cadastro de clientes, cadastro de produtos, controle de estoque, formas de pagamento, caixa e vendas em rede local.
+Farmatech e um sistema web para gestão de farmacia, pensado para uso em balcão, cadastro de clientes, cadastro de produtos, controle de estoque, formas de pagamento, caixa e vendas em rede local.
 
 O projeto esta organizado em duas partes principais:
 
