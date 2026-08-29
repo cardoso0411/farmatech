@@ -24,3 +24,9 @@ export async function createCustomerType(req: Request, res: Response) {
     customerType,
   });
 }
+
+export async function deleteCustomerType(req: Request, res: Response) {
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  await prisma.customerType.delete({ where: { id } });
+  return res.status(204).send();
+}

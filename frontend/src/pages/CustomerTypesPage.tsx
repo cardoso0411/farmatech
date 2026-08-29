@@ -1,4 +1,18 @@
-import { Alert, Box, Button, Card, CardContent, Stack, TextField, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { PageHeader } from '../components/common/PageHeader';
@@ -10,6 +24,8 @@ export function CustomerTypesPage() {
   const { customerTypesQuery } = useCustomerSupport();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedCustomerTypeId, setSelectedCustomerTypeId] = useState('');
 
   const createMutation = useMutation({
     mutationFn: async () => api.post('/customer-types', { name, description: description || undefined }),
@@ -19,6 +35,17 @@ export function CustomerTypesPage() {
       await queryClient.invalidateQueries({ queryKey: ['customer-types'] });
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => api.delete(`/customer-types/${id}`),
+    onSuccess: async () => {
+      setIsDeleteDialogOpen(false);
+      setSelectedCustomerTypeId('');
+      await queryClient.invalidateQueries({ queryKey: ['customer-types'] });
+    },
+  });
+
+  const customerTypes = customerTypesQuery.data ?? [];
 
   return (
     <Box>
@@ -47,6 +74,9 @@ export function CustomerTypesPage() {
             <Button variant="contained" onClick={() => createMutation.mutate()} disabled={createMutation.isPending}>
               Salvar tipo
             </Button>
+            <Button color="error" variant="outlined" onClick={() => setIsDeleteDialogOpen(true)} disabled={!customerTypes.length}>
+              Excluir
+            </Button>
           </Stack>
           {createMutation.isError && <Alert severity="error" sx={{ mt: 2 }}>Erro ao salvar tipo de cliente.</Alert>}
         </CardContent>
@@ -56,7 +86,7 @@ export function CustomerTypesPage() {
         <CardContent>
           <Stack spacing={1.5}>
             <Typography variant="h6">Tipos cadastrados</Typography>
-            {(customerTypesQuery.data ?? []).map((item) => (
+            {customerTypes.map((item) => (
               <Typography key={item.id} color="text.secondary">
                 {item.name}
               </Typography>
@@ -64,6 +94,38 @@ export function CustomerTypesPage() {
           </Stack>
         </CardContent>
       </Card>
+
+      <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)} fullWidth maxWidth="xs">
+        <DialogTitle>Excluir tipo de cliente</DialogTitle>
+        <DialogContent>
+          <TextField
+            select
+            label="Tipo de cliente"
+            value={selectedCustomerTypeId}
+            onChange={(event) => setSelectedCustomerTypeId(event.target.value)}
+            fullWidth
+            sx={{ mt: 1 }}
+          >
+            {customerTypes.map((customerType) => (
+              <MenuItem key={customerType.id} value={customerType.id}>
+                {customerType.name}
+              </MenuItem>
+            ))}
+          </TextField>
+          {deleteMutation.isError && <Alert severity="error" sx={{ mt: 2 }}>Não foi possível excluir o tipo de cliente.</Alert>}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsDeleteDialogOpen(false)}>Cancelar</Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => deleteMutation.mutate(selectedCustomerTypeId)}
+            disabled={!selectedCustomerTypeId || deleteMutation.isPending}
+          >
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
