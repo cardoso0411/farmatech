@@ -136,7 +136,14 @@ export function CustomersListPage() {
                     </TableRow>
                   ) : (
                     (customersQuery.data ?? []).map((customer) => (
-                      <TableRow key={customer.id}>
+                      <TableRow
+                        key={customer.id}
+                        sx={{
+                          '&:nth-of-type(odd)': {
+                            backgroundColor: 'action.hover',
+                          },
+                        }}
+                      >
                         <TableCell>{customer.code}</TableCell>
                         <TableCell>{customer.legalName || customer.fullName || customer.tradeName || '-'}</TableCell>
                         <TableCell>{customer.cpf || customer.cnpj || '-'}</TableCell>

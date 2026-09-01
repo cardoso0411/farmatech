@@ -1,4 +1,22 @@
-import { Alert, Box, Button, Card, CardContent, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  MenuItem,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField,
+} from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { PageHeader } from '../components/common/PageHeader';
@@ -16,6 +34,8 @@ export function ProductGroupsPage() {
     code: '',
     caution: '',
   });
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedGroupId, setSelectedGroupId] = useState('');
 
   const createMutation = useMutation({
     mutationFn: async () => api.post('/product-groups', formData),
@@ -31,6 +51,17 @@ export function ProductGroupsPage() {
       await queryClient.invalidateQueries({ queryKey: ['product-groups'] });
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => api.delete(`/product-groups/${id}`),
+    onSuccess: async () => {
+      setIsDeleteDialogOpen(false);
+      setSelectedGroupId('');
+      await queryClient.invalidateQueries({ queryKey: ['product-groups'] });
+    },
+  });
+
+  const groups = groupsQuery.data ?? [];
 
   function updateField<K extends keyof typeof formData>(field: K, value: (typeof formData)[K]) {
     setFormData((current) => ({ ...current, [field]: value }));
@@ -55,6 +86,9 @@ export function ProductGroupsPage() {
             <Button variant="contained" onClick={() => createMutation.mutate()} disabled={createMutation.isPending}>
               Salvar grupo
             </Button>
+            <Button color="error" variant="outlined" onClick={() => setIsDeleteDialogOpen(true)} disabled={!groups.length}>
+              Excluir
+            </Button>
           </Stack>
           {createMutation.isError && <Alert severity="error" sx={{ mt: 2 }}>Erro ao salvar grupo.</Alert>}
         </CardContent>
@@ -74,7 +108,7 @@ export function ProductGroupsPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {(groupsQuery.data ?? []).map((group) => (
+              {groups.map((group) => (
                 <TableRow key={group.id}>
                   <TableCell>{group.local}</TableCell>
                   <TableCell>{group.groupName}</TableCell>
@@ -88,6 +122,42 @@ export function ProductGroupsPage() {
           </Table>
         </CardContent>
       </Card>
+
+      <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)} fullWidth maxWidth="xs">
+        <DialogTitle>Excluir grupo</DialogTitle>
+        <DialogContent>
+          <TextField
+            select
+            label="Grupo"
+            value={selectedGroupId}
+            onChange={(event) => setSelectedGroupId(event.target.value)}
+            fullWidth
+            sx={{ mt: 1 }}
+          >
+            {groups.map((group) => (
+              <MenuItem key={group.id} value={group.id}>
+                {group.code} - {group.groupName}
+              </MenuItem>
+            ))}
+          </TextField>
+          {deleteMutation.isError && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              Não foi possível excluir o grupo. Ele pode estar vinculado a produtos.
+            </Alert>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsDeleteDialogOpen(false)}>Cancelar</Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => deleteMutation.mutate(selectedGroupId)}
+            disabled={!selectedGroupId || deleteMutation.isPending}
+          >
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

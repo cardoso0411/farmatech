@@ -158,7 +158,15 @@ export function ProductListPage() {
                       const flags = buildFlags(product);
 
                       return (
-                        <TableRow key={product.id} hover>
+                        <TableRow
+                          key={product.id}
+                          hover
+                          sx={{
+                            '&:nth-of-type(odd)': {
+                              backgroundColor: 'action.hover',
+                            },
+                          }}
+                        >
                           <TableCell>{product.barcode || '-'}</TableCell>
                           <TableCell>{product.summary}</TableCell>
                           <TableCell>{product.description}</TableCell>
