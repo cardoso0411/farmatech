@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail --names backend,frontend --prefix-colors blue,green \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\""
+  },
   "dependencies": {
     "concurrently": "^10.0.5"
   }

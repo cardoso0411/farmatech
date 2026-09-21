@@ -255,26 +255,27 @@ Scripts disponíveis:
 
 1. Crie o banco MySQL `farmatech`.
 2. Configure `backend/.env`.
-3. Instale as dependencias do backend:
+3. Instale as dependencias do projeto (uma única vez):
 
 ```bash
+npm install
 cd backend
 npm install
 npm run prisma:generate
 npm run prisma:migrate
 npm run prisma:seed
-npm run dev
+cd ../frontend
+npm install
 ```
 
-4. Em outro terminal, instale e rode o frontend:
+4. Volte à raiz do projeto e inicie backend e frontend no mesmo terminal:
 
 ```bash
-cd frontend
-npm install
+cd ..
 npm run dev
 ```
 
-5. Acesse o frontend em `http://localhost:5173`.
+5. Acesse o frontend em `http://localhost:5173`. Use `Ctrl+C` para encerrar os dois processos.
 
 Observação: no código atual, o backend usa `PORT=3333` por padrão, enquanto o frontend esta configurado em `frontend/src/lib/api.ts` para chamar `http://localhost:3000/api`. Ajuste a porta do backend para `3000` ou altere o `baseURL` do frontend para `http://localhost:3333/api`.
 
